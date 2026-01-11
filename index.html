@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Portal</title>
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logo i {
+            margin-right: 12px;
+            font-size: 28px;
+            color: #2ecc71;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+        }
+
+      
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+   
+        .dashboard {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-card i {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+       
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title i {
+            color: #3498db;
+        }
+
+        .attendance-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+    
+        .courses-summary-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .courses-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .courses-table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .courses-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .courses-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .course-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .course-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .course-name-cell .course-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .course-name-cell .course-info p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .attendance-percentage {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .attendance-percentage.good {
+            color: #2ecc71;
+        }
+
+        .attendance-percentage.warning {
+            color: #f39c12;
+        }
+
+        .attendance-percentage.low {
+            color: #e74c3c;
+        }
+
+        .attendance-details {
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .attendance-bar {
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .attendance-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .status-good {
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+        }
+
+        .status-warning {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+        }
+
+        .status-low {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .course-box {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border-top: 4px solid;
+        }
+
+        .course-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-box-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .course-box-title h4 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .course-box-title p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .course-icon-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+        }
+
+        .course-box-stats {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .course-box-percentage {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .course-box-bar {
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .course-box-fill {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .course-box-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-item .label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .detail-item .value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+  
+        .today-attendance {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .today-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .today-class-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #ecf0f1;
+            transition: all 0.3s;
+        }
+
+        .today-class-card.present {
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .today-class-card.absent {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .today-class-card.pending {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.05);
+        }
+
+      
+        .report-filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            border: 1px solid #ecf0f1;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 200px;
+        }
+
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+  
+        .footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 25px 5%;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .footer-bottom {
+            color: #95a5a6;
+            font-size: 14px;
+        }
+       
+        .login-wrapper {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .login-sub {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+        }
+
+        .login-input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .login-error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .nav-links {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .today-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .course-box-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <div id="loginPage" class="login-wrapper">
+        <div class="login-title">
+            <i class="fas fa-user-check"></i> Student Attendance Portal
+        </div>
+        <div class="login-sub">View attendance for your 5 courses</div>
+        
+        <input type="text" class="login-input" id="loginUsername" placeholder="Student ID" value="2025BCS0256">
+        <input type="password" class="login-input" id="loginPassword" placeholder="Password" value="password123">
+        
+        <button class="btn btn-primary" onclick="login()" style="width: 100%; margin-top: 20px;">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        
+        <div class="login-error" id="loginError"></div>
+        
+        <div style="margin-top: 20px; font-size: 12px; color: #666;">
+            <p><strong>Demo Account:</strong> 2025BCS0256 / password123</p>
+            <p>View attendance for all 5 courses</p>
+        </div>
+    </div>
+
+
+    <div id="mainApp" style="display: none;">
+ 
+        <header class="header">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-user-check"></i>
+                    <span>Student Attendance Portal</span>
+                </div>
+
+                <ul class="nav-links">
+                    <li><a href="#" onclick="showSection('dashboard')" class="active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                    <li><a href="#" onclick="showSection('courses')">
+                        <i class="fas fa-book"></i> My Courses
+                    </a></li>
+                    <li><a href="#" onclick="showSection('today')">
+                        <i class="fas fa-calendar-day"></i> Today's Status
+                    </a></li>
+                    <li><a href="#" onclick="showSection('reports')">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a></li>
+                </ul>
+
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">AK</div>
+                    <button class="btn btn-primary" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+
+        <div class="container">
+   
+            <section id="dashboard" class="section active">
+                <div class="dashboard">
+                    <div class="dashboard-header">
+                        <h1><i class="fas fa-tachometer-alt"></i> Welcome, <span id="welcomeName">Abhay Kumar</span></h1>
+                        <p>Your attendance summary for all 5 courses</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-user-check"></i>
+                            <h3 id="totalAttendance">88%</h3>
+                            <p>Overall Attendance</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-calendar-check"></i>
+                            <h3 id="daysPresent">90</h3>
+                            <p>Classes Attended</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3 id="daysAbsent">12</h3>
+                            <p>Classes Absent</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-medal"></i>
+                            <h3 id="bestCourse">100%</h3>
+                            <p>Best Course</p>
+                        </div>
+                    </div>
+                </div>
+
+       
+                <div class="courses-summary-container">
+                    <h2 class="section-title"><i class="fas fa-table"></i> Your 5 Courses - Attendance Summary</h2>
+                    
+                    <table class="courses-table">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Attendance %</th>
+                                <th>Progress</th>
+                                <th>Classes Attended</th>
+                                <th>Status</th>
+                                <th>Faculty</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coursesSummaryTable">
+              
+                        </tbody>
+                    </table>
+                </div>
+
+       
+                <div class="attendance-container">
+                    <h2 class="section-title"><i class="fas fa-th-large"></i> Course Overview</h2>
+                    
+                    <div class="courses-grid" id="coursesGrid">
+      
+                    </div>
+                </div>
+
+                <div class="attendance-container" style="margin-top: 30px;">
+                    <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> Attendance Requirements</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div style="padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #3498db;">
+                            <h4><i class="fas fa-percentage"></i> Minimum Requirement</h4>
+                            <p style="margin-top: 10px; font-size: 24px; font-weight: bold; color: #2c3e50;">75%</p>
+                            <p style="color: #7f8c8d;">Required in each course</p>
+                        </div>
+                        
+                        <div style="padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #2ecc71;">
+                            <h4><i class="fas fa-check-circle"></i> Current Status</h4>
+                            <p style="margin-top: 10px; font-size: 24px; font-weight: bold; color: #2ecc71;">All Met ✓</p>
+                            <p style="color: #7f8c8d;">All courses above 75%</p>
+                        </div>
+                        
+                        <div style="padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #f39c12;">
+                            <h4><i class="fas fa-calendar"></i> Next Review</h4>
+                            <p style="margin-top: 10px; font-size: 24px; font-weight: bold; color: #f39c12;">June 2025</p>
+                            <p style="color: #7f8c8d;">End of Semester</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+     
+            <section id="courses" class="section">
+                <div class="attendance-container">
+                    <h2 class="section-title"><i class="fas fa-book"></i> Detailed Course Information</h2>
+                    <p style="margin-bottom: 20px; color: #7f8c8d;">Complete details for each of your 5 courses</p>
+                    
+                    <div class="courses-grid">
+                   
+                                                 <div class="course-box" style="border-top-color: #3498db;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>COMPUTER PROGRAMMING</h4>
+                                    <p>CS101 | 3 Credits</p>
+                                </div>
+                                <div class="course-icon-small" style="background: #3498db;">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #2ecc71;">88%</div>
+                                <div class="course-box-bar">
+                                    <div class="course-box-fill" style="width: 88%; background: #2ecc71;"></div>
+                                </div>
+                                <p style="color: #7f8c8d; font-size: 14px;">22 of 25 classes attended</p>
+                            </div>
+                            
+                            <div class="course-box-details">
+                                <div class="detail-item">
+                                    <div class="label">Faculty</div>
+                                    <div class="value">Prof. Riaz</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Schedule</div>
+                                    <div class="value">Mon, Wed, Fri</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Time</div>
+                                    <div class="value">9:00-10:00 AM</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Room</div>
+                                    <div class="value">BC301</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="course-box" style="border-top-color: #e74c3c;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>ELECTRONIC CIRCUIT</h4>
+                                    <p>EC201 | 4 Credits</p>
+                                </div>
+                                <div class="course-icon-small" style="background: #e74c3c;">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #f39c12;">85%</div>
+                                <div class="course-box-bar">
+                                    <div class="course-box-fill" style="width: 85%; background: #f39c12;"></div>
+                                </div>
+                                <p style="color: #7f8c8d; font-size: 14px;">17 of 20 classes attended</p>
+                            </div>
+                            
+                            <div class="course-box-details">
+                                <div class="detail-item">
+                                    <div class="label">Faculty</div>
+                                    <div class="value">Prof. vineeth</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Schedule</div>
+                                    <div class="value">Tue, Thu</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Time</div>
+                                    <div class="value">10:00-11:30 AM</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Room</div>
+                                    <div class="value">BC301</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="course-box" style="border-top-color: #2ecc71;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>IT WORKSHOP</h4>
+                                    <p>IT301 | 2 Credits</p>
+                                </div>
+                                <div class="course-icon-small" style="background: #2ecc71;">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #2ecc71;">91%</div>
+                                <div class="course-box-bar">
+                                    <div class="course-box-fill" style="width: 91%; background: #2ecc71;"></div>
+                                </div>
+                                <p style="color: #7f8c8d; font-size: 14px;">20 of 22 classes attended</p>
+                            </div>
+                            
+                            <div class="course-box-details">
+                                <div class="detail-item">
+                                    <div class="label">Faculty</div>
+                                    <div class="value">Prof. Victor Paul</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Schedule</div>
+                                    <div class="value">Mon, Wed</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Time</div>
+                                    <div class="value">11:00 AM-1:00 PM</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Room</div>
+                                    <div class="value">BC301</div>
+                                </div>
+                            </div>
+                        </div>
+
+                     
+                        <div class="course-box" style="border-top-color: #f39c12;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>COMMUNICATION SKILLS</h4>
+                                    <p>CS401 | 2 Credits</p>
+                                </div>
+                                <div class="course-icon-small" style="background: #f39c12;">
+                                    <i class="fas fa-comments"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #2ecc71;">100%</div>
+                                <div class="course-box-bar">
+                                    <div class="course-box-fill" style="width: 100%; background: #2ecc71;"></div>
+                                </div>
+                                <p style="color: #7f8c8d; font-size: 14px;">15 of 15 classes attended</p>
+                            </div>
+                            
+                            <div class="course-box-details">
+                                <div class="detail-item">
+                                    <div class="label">Faculty</div>
+                                    <div class="value">Prof. Gayatri</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Schedule</div>
+                                    <div class="value">Friday</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Time</div>
+                                    <div class="value">2:00-4:00 PM</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Room</div>
+                                    <div class="value">BC301</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="course-box" style="border-top-color: #9b59b6;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>FOREIGN LANGUAGE</h4>
+                                    <p>FL501 | 2 Credits</p>
+                                </div>
+                                <div class="course-icon-small" style="background: #9b59b6;">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #2ecc71;">89%</div>
+                                <div class="course-box-bar">
+                                    <div class="course-box-fill" style="width: 89%; background: #2ecc71;"></div>
+                                </div>
+                                <p style="color: #7f8c8d; font-size: 14px;">16 of 18 classes attended</p>
+                            </div>
+                            
+                            <div class="course-box-details">
+                                <div class="detail-item">
+                                    <div class="label">Faculty</div>
+                                    <div class="value">Prof. Neha</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Schedule</div>
+                                    <div class="value">Tue, Thu</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Time</div>
+                                    <div class="value">3:00-4:30 PM</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="label">Room</div>
+                                    <div class="value">BC301</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            
+            <section id="today" class="section">
+                <div class="today-attendance">
+                    <h2 class="section-title"><i class="fas fa-calendar-day"></i> Today's Attendance Status</h2>
+                    <p style="margin-bottom: 20px; color: #7f8c8d;">Attendance marked by faculty for today's classes</p>
+                    
+                    <div class="today-grid" id="todayClasses">
+                
+                    </div>
+                </div>
+
+                <div class="attendance-container" style="margin-top: 30px;">
+                    <h2 class="section-title"><i class="fas fa-history"></i> Recent Attendance Records</h2>
+                    <div style="overflow-x: auto;">
+                        <table class="courses-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Course</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                    <th>Faculty</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentAttendanceTable">
+                             
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+          
+            <section id="reports" class="section">
+                <div class="attendance-container">
+                    <h2 class="section-title"><i class="fas fa-chart-bar"></i> Attendance Reports</h2>
+                    
+                    <div class="report-filters">
+                        <div class="filter-group">
+                            <label><i class="fas fa-calendar"></i> Select Date</label>
+                            <input type="date" id="reportDate" onchange="filterReports()" value="2025-03-15">
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="downloadReport()">
+                            <i class="fas fa-download"></i> Download Report
+                        </button>
+                    </div>
+                    
+                  
+                    <div style="overflow-x: auto; margin-top: 30px;">
+                        <table class="courses-table">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                    <th>Faculty</th>
+                                    <th>Room</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="attendance-container" style="margin-top: 30px;">
+                    <h2 class="section-title"><i class="fas fa-chart-pie"></i> Attendance Statistics</h2>
+                    
+                    <div class="courses-grid">
+                        <div class="course-box" style="border-top-color: #3498db; text-align: center;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>Overall Performance</h4>
+                                </div>
+                            </div>
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #3498db;">88%</div>
+                                <div class="course-box-bar">
+                                    <div class="course-box-fill" style="width: 88%; background: #3498db;"></div>
+                                </div>
+                                <p style="color: #7f8c8d;">90 of 102 total classes</p>
+                            </div>
+                        </div>
+
+                        <div class="course-box" style="border-top-color: #2ecc71; text-align: center;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>Best Course</h4>
+                                </div>
+                            </div>
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #2ecc71;">100%</div>
+                                <p style="color: #7f8c8d; margin-top: 10px;">COMMUNICATION SKILLS</p>
+                                <p style="color: #7f8c8d; font-size: 14px;">Perfect attendance</p>
+                            </div>
+                        </div>
+
+                        <div class="course-box" style="border-top-color: #e74c3c; text-align: center;">
+                            <div class="course-box-header">
+                                <div class="course-box-title">
+                                    <h4>Needs Improvement</h4>
+                                </div>
+                            </div>
+                            <div class="course-box-stats">
+                                <div class="course-box-percentage" style="color: #e74c3c;">85%</div>
+                                <p style="color: #7f8c8d; margin-top: 10px;">ELECTRONIC CIRCUIT</p>
+                                <p style="color: #7f8c8d; font-size: 14px;">3 absences</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        
+        <footer class="footer">
+            <div class="footer-bottom">
+                &copy; 2025 Student Attendance Portal | 
+                <span style="color: #2ecc71;">5 Courses: COMPUTER PROGRAMMING, ELECTRONIC CIRCUIT, IT WORKSHOP, COMMUNICATION SKILLS, FOREIGN LANGUAGE</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+     
+        let currentUser = null;
+        
+      
+        const COURSES = [
+            {
+                id: 1,
+                name: "COMPUTER PROGRAMMING",
+                code: "CS101",
+                credits: "3",
+                color: "#3498db",
+                icon: "fa-code",
+                faculty: "Prof. Riaz",
+                schedule: "Mon, Wed, Fri | 9:00-10:00 AM",
+                room: "BC301",
+                attendance: 88,
+                totalClasses: 25,
+                attended: 22,
+                absent: 3,
+                status: "good"
+            },
+            {
+                id: 2,
+                name: "ELECTRONIC CIRCUIT",
+                code: "EC201",
+                credits: "4",
+                color: "#e74c3c",
+                icon: "fa-bolt",
+                faculty: "Prof. Vineeth",
+                schedule: "Tue, Thu | 10:00-11:30 AM",
+                room: "BC301",
+                attendance: 85,
+                totalClasses: 20,
+                attended: 17,
+                absent: 3,
+                status: "warning"
+            },
+            {
+                id: 3,
+                name: "IT WORKSHOP",
+                code: "IT301",
+                credits: "2",
+                color: "#2ecc71",
+                icon: "fa-laptop",
+                faculty: "Prof. Victor Paul",
+                schedule: "Mon, Wed | 11:00 AM-1:00 PM",
+                room: "BC301",
+                attendance: 91,
+                totalClasses: 22,
+                attended: 20,
+                absent: 2,
+                status: "good"
+            },
+            {
+                id: 4,
+                name: "COMMUNICATION SKILLS",
+                code: "CS401",
+                credits: "2",
+                color: "#f39c12",
+                icon: "fa-comments",
+                faculty: "Prof. Gayatri",
+                schedule: "Fri | 2:00-4:00 PM",
+                room: "BC301",
+                attendance: 100,
+                totalClasses: 15,
+                attended: 15,
+                absent: 0,
+                status: "good"
+            },
+            {
+                id: 5,
+                name: "FOREIGN LANGUAGE",
+                code: "FL501",
+                credits: "2",
+                color: "#9b59b6",
+                icon: "fa-globe",
+                faculty: "Prof. Neha",
+                schedule: "Tue, Thu | 3:00-4:30 PM",
+                room: "BC301",
+                attendance: 89,
+                totalClasses: 18,
+                attended: 16,
+                absent: 2,
+                status: "good"
+            }
+        ];
+
+      
+        const ATTENDANCE_RECORDS = [
+            
+            { date: "2025-03-15", course: "COMPUTER PROGRAMMING", status: "Present", time: "09:05 AM", faculty: "Prof. Riaz", remarks: "On time" },
+            { date: "2025-03-15", course: "ELECTRONIC CIRCUIT", status: "Present", time: "10:10 AM", faculty: "Prof. Vineeth", remarks: "Late by 10 minutes" },
+            { date: "2025-03-15", course: "IT WORKSHOP", status: "Present", time: "11:00 AM", faculty: "Prof. Victor Paul", remarks: "On time" },
+            { date: "2025-03-15", course: "COMMUNICATION SKILLS", status: "Absent", time: "--", faculty: "Prof. Gayatri", remarks: "Medical leave" },
+            { date: "2025-03-15", course: "FOREIGN LANGUAGE", status: "Present", time: "03:05 PM", faculty: "Prof. Neha", remarks: "On time" },
+            
+    
+            { date: "2025-03-14", course: "COMPUTER PROGRAMMING", status: "Present", time: "09:00 AM", faculty: "Prof. Riaz", remarks: "On time" },
+            { date: "2025-03-14", course: "IT WORKSHOP", status: "Present", time: "11:05 AM", faculty: "Prof. Victor Paul", remarks: "Late by 5 minutes" },
+            { date: "2025-03-13", course: "ELECTRONIC CIRCUIT", status: "Absent", time: "--", faculty: "Prof. Vineeth", remarks: "Personal work" },
+            { date: "2025-03-13", course: "FOREIGN LANGUAGE", status: "Present", time: "03:00 PM", faculty: "Prof. Neha", remarks: "On time" },
+            { date: "2025-03-12", course: "COMPUTER PROGRAMMING", status: "Present", time: "09:00 AM", faculty: "Prof. Riaz", remarks: "On time" },
+            { date: "2025-03-12", course: "IT WORKSHOP", status: "Present", time: "11:00 AM", faculty: "Prof. Victor Paul", remarks: "On time" },
+            { date: "2025-03-11", course: "ELECTRONIC CIRCUIT", status: "Present", time: "10:05 AM", faculty: "Prof. Vineeth", remarks: "Late by 5 minutes" },
+            { date: "2025-03-11", course: "FOREIGN LANGUAGE", status: "Absent", time: "--", faculty: "Prof. Neha", remarks: "Personal work" },
+            { date: "2025-03-10", course: "COMPUTER PROGRAMMING", status: "Absent", time: "--", faculty: "Prof. Riaz", remarks: "Medical leave" },
+            { date: "2025-03-10", course: "COMMUNICATION SKILLS", status: "Present", time: "02:00 PM", faculty: "Prof. Gayatri", remarks: "On time" },
+            { date: "2025-03-07", course: "COMMUNICATION SKILLS", status: "Present", time: "02:05 PM", faculty: "Prof. Gayatri", remarks: "Late by 5 minutes" },
+            { date: "2025-03-06", course: "ELECTRONIC CIRCUIT", status: "Present", time: "10:00 AM", faculty: "Prof. Vineeth", remarks: "On time" },
+            { date: "2025-03-06", course: "IT WORKSHOP", status: "Absent", time: "--", faculty: "Prof. Victor Paul", remarks: "Medical leave" },
+            { date: "2025-03-05", course: "FOREIGN LANGUAGE", status: "Present", time: "03:10 PM", faculty: "Prof. Neha", remarks: "Late by 10 minutes" },
+            { date: "2025-03-04", course: "ELECTRONIC CIRCUIT", status: "Present", time: "10:00 AM", faculty: "Prof. Vineeth", remarks: "On time" },
+        ];
+
+      
+        function initData() {
+            populateDashboard();
+            populateTodayStatus();
+            populateReportsTable();
+        }
+        
+     
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('loginError');
+            
+       
+            if (!username || !password) {
+                errorElement.textContent = 'Please enter username and password';
+                return;
+            }
+            
+   
+            if ((username === '2025BCS0256' && password === 'password123') || password === 'student') {
+                currentUser = { 
+                    name: 'ABHAY KUMAR', 
+                    id: username === '2025BCS0256' ? '2025BCS0256' : username,
+                    email: username.includes('@') ? username : username.toLowerCase() + '@college.edu',
+                    branch: 'Computer Science & Engineering',
+                    year: '1st Year',
+                    section: 'A',
+                    phone: '+91 98765 43210'
+                };
+                showMainApp();
+            } else {
+                errorElement.textContent = 'Invalid credentials. Use: 2025BCS0256 / password123';
+            }
+        }
+        
+  
+        function showMainApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            
+           
+               document.getElementById('welcomeName').textContent = currentUser.name;
+            document.getElementById('userAvatar').textContent = currentUser.name.split(' ')[0].charAt(0) + 
+                                                               (currentUser.name.split(' ')[1] ? currentUser.name.split(' ')[1].charAt(0) : '');
+            
+        
+            initData();
+            
+        
+            document.getElementById('reportDate').value = '2025-03-15';
+        }
+        
+   
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'block';
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginError').textContent = '';
+            }
+        }
+        
+  
+        function showSection(sectionId) {
+      
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+          
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+        
+            document.getElementById(sectionId).classList.add('active');
+            
+         
+            event.target.classList.add('active');
+        }
+        
+        
+        function populateDashboard() {
+         
+            let totalClasses = 0;
+            let totalAttended = 0;
+            let bestCourse = COURSES[0];
+            
+            COURSES.forEach(course => {
+                totalClasses += course.totalClasses;
+                totalAttended += course.attended;
+                if (course.attendance > bestCourse.attendance) {
+                    bestCourse = course;
+                }
+            });
+            
+            const overallAttendance = Math.round((totalAttended / totalClasses) * 100);
+            
+            
+            document.getElementById('totalAttendance').textContent = overallAttendance + '%';
+            document.getElementById('daysPresent').textContent = totalAttended;
+            document.getElementById('daysAbsent').textContent = totalClasses - totalAttended;
+            document.getElementById('bestCourse').textContent = bestCourse.attendance + '%';
+            
+          
+            populateCoursesSummaryTable();
+            
+         
+            populateCoursesGrid();
+        }
+        
+       
+        function populateCoursesSummaryTable() {
+            const tableBody = document.getElementById('coursesSummaryTable');
+            tableBody.innerHTML = '';
+            
+            COURSES.forEach(course => {
+             
+                let statusClass = '';
+                let statusText = '';
+                
+                if (course.attendance >= 90) {
+                    statusClass = 'status-good';
+                    statusText = 'Excellent';
+                } else if (course.attendance >= 75) {
+                    statusClass = 'status-good';
+                    statusText = 'Good';
+                } else if (course.attendance >= 60) {
+                    statusClass = 'status-warning';
+                    statusText = 'Warning';
+                } else {
+                    statusClass = 'status-low';
+                    statusText = 'Low';
+                }
+                
+             
+                let percentageClass = 'good';
+                if (course.attendance < 75) {
+                    percentageClass = 'low';
+                } else if (course.attendance < 85) {
+                    percentageClass = 'warning';
+                }
+                
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="course-name-cell">
+                            <div class="course-icon" style="background: ${course.color};">
+                                <i class="fas ${course.icon}"></i>
+                            </div>
+                            <div class="course-info">
+                                <h4>${course.name}</h4>
+                                <p>${course.code} | ${course.credits} Credits</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="attendance-percentage ${percentageClass}">
+                            ${course.attendance}%
+                        </div>
+                    </td>
+                    <td>
+                        <div class="attendance-bar">
+                            <div class="attendance-fill" style="width: ${course.attendance}%; background: ${course.color};"></div>
+                        </div>
+                        <div class="attendance-details">${course.attended}/${course.totalClasses} classes</div>
+                    </td>
+                    <td>
+                        <div class="attendance-details">
+                            <div style="color: #2ecc71; font-weight: bold;">${course.attended}</div>
+                            <div style="color: #e74c3c; font-size: 12px;">${course.absent} absent</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                    <td>
+                        <div class="attendance-details">${course.faculty}</div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+       
+        function populateCoursesGrid() {
+            const coursesGrid = document.getElementById('coursesGrid');
+            coursesGrid.innerHTML = '';
+            
+            COURSES.forEach(course => {
+                
+                let percentageClass = 'good';
+                if (course.attendance < 75) {
+                    percentageClass = 'low';
+                } else if (course.attendance < 85) {
+                    percentageClass = 'warning';
+                }
+                
+                const courseBox = document.createElement('div');
+                courseBox.className = 'course-box';
+                courseBox.style.borderTopColor = course.color;
+                
+                courseBox.innerHTML = `
+                    <div class="course-box-header">
+                        <div class="course-box-title">
+                            <h4>${course.name}</h4>
+                            <p>${course.code} | ${course.credits} Credits</p>
+                        </div>
+                        <div class="course-icon-small" style="background: ${course.color};">
+                            <i class="fas ${course.icon}"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="course-box-stats">
+                        <div class="course-box-percentage" style="color: ${course.attendance >= 75 ? '#2ecc71' : '#e74c3c'};">${course.attendance}%</div>
+                        <div class="course-box-bar">
+                            <div class="course-box-fill" style="width: ${course.attendance}%; background: ${course.color};"></div>
+                        </div>
+                        <p style="color: #7f8c8d; font-size: 14px;">${course.attended} of ${course.totalClasses} classes attended</p>
+                    </div>
+                    
+                    <div class="course-box-details">
+                        <div class="detail-item">
+                            <div class="label">Faculty</div>
+                            <div class="value">${course.faculty}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Schedule</div>
+                            <div class="value">${course.schedule.split('|')[0]}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Time</div>
+                            <div class="value">${course.schedule.split('|')[1]}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Room</div>
+                            <div class="value">${course.room}</div>
+                        </div>
+                    </div>
+                `;
+                
+                coursesGrid.appendChild(courseBox);
+            });
+        }
+        
+       
+        function populateTodayStatus() {
+            const todayClasses = document.getElementById('todayClasses');
+            const recentTable = document.getElementById('recentAttendanceTable');
+            
+           
+            todayClasses.innerHTML = '';
+            recentTable.innerHTML = '';
+            
+            
+            const todayDate = '2025-03-15';
+        
+            const todayRecords = ATTENDANCE_RECORDS.filter(record => record.date === todayDate);
+            
+           
+            COURSES.forEach(course => {
+                const todayRecord = todayRecords.find(record => record.course === course.name);
+                let status = 'Pending';
+                let statusClass = 'pending';
+                let time = '--:--';
+                let remarks = 'Not marked yet';
+                
+                if (todayRecord) {
+                    status = todayRecord.status;
+                    statusClass = todayRecord.status.toLowerCase();
+                    time = todayRecord.time;
+                    remarks = todayRecord.remarks;
+                }
+                
+                const classCard = document.createElement('div');
+                classCard.className = `today-class-card ${statusClass}`;
+                
+                classCard.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                        <div class="course-icon-small" style="background: ${course.color};">
+                            <i class="fas ${course.icon}"></i>
+                        </div>
+                        <div>
+                            <h4 style="color: #2c3e50; margin-bottom: 5px;">${course.name}</h4>
+                            <p style="color: #7f8c8d; font-size: 14px;">${course.schedule.split('|')[1]}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Status</div>
+                            <div style="font-weight: bold; color: ${status === 'Present' ? '#2ecc71' : status === 'Absent' ? '#e74c3c' : '#f39c12'};">${status}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Time</div>
+                            <div style="font-weight: bold;">${time}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="font-size: 14px; color: #7f8c8d;">
+                        <i class="fas fa-info-circle"></i> ${remarks}
+                    </div>
+                `;
+                
+                todayClasses.appendChild(classCard);
+            });
+            
+            
+            const recentRecords = ATTENDANCE_RECORDS.slice(0, 10);
+            recentRecords.forEach(record => {
+                const row = document.createElement('tr');
+                
+         
+                const date = new Date(record.date);
+                const formattedDate = date.toLocaleDateString('en-IN', { 
+                    day: '2-digit', month: 'short', year: 'numeric' 
+                });
+                
+            
+                const statusClass = record.status === 'Present' ? 'status-good' : 
+                                   record.status === 'Absent' ? 'status-low' : 'status-warning';
+                const statusText = record.status === 'Present' ? 'Present' : 
+                                  record.status === 'Absent' ? 'Absent' : 'Late';
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${record.course}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${record.time}</td>
+                    <td>${record.faculty}</td>
+                    <td>${record.remarks}</td>
+                `;
+                
+                recentTable.appendChild(row);
+            });
+        }
+        
+       
+         function populateReportsTable() {
+            const tableBody = document.getElementById('reportTableBody');
+            
+       
+            const selectedDate = document.getElementById('reportDate').value;
+            
+          
+            tableBody.innerHTML = '';
+            
+         
+            const filteredRecords = ATTENDANCE_RECORDS.filter(record => record.date === selectedDate);
+            
+    
+            if (filteredRecords.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 30px; color: #7f8c8d;">
+                            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                            No attendance records found for selected date
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+       
+            filteredRecords.forEach(record => {
+                const row = document.createElement('tr');
+                
+      
+                const date = new Date(record.date);
+                const formattedDate = date.toLocaleDateString('en-IN', { 
+                    day: '2-digit', month: 'short', year: 'numeric' 
+                });
+                
+              
+                const course = COURSES.find(c => c.name === record.course);
+                const room = course ? course.room : 'N/A';
+                
+                
+                const statusClass = record.status === 'Present' ? 'status-good' : 
+                                   record.status === 'Absent' ? 'status-low' : 'status-warning';
+                const statusText = record.status === 'Present' ? 'Present' : 
+                                  record.status === 'Absent' ? 'Absent' : 'Late';
+                
+                row.innerHTML = `
+                    <td>${record.course}</td>
+                    <td>${formattedDate}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${record.time}</td>
+                    <td>${record.faculty}</td>
+                    <td>${room}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+
+        function filterReports() {
+            populateReportsTable();
+        }
+        
+
+        function downloadReport() {
+            alert('Attendance report downloaded .In a real system,this would generate a PDF report.');
+        }
+        
+  
+        window.onload = function() {
+         
+            const today = new Date();
+            const formattedToday = today.toLocaleDateString('en-IN', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            
+            const loginSub = document.querySelector('.login-sub');
+            if (loginSub) {
+                loginSub.textContent = `View attendance for your 5 courses - Today: ${formattedToday}`;
+            }
+        };
+    </script>
+</body>
+</html>
